@@ -70,7 +70,7 @@
             if ('NDEFReader' in window) {
                 try {
                     const ndef = new NDEFReader();
-                    await ndef.scan();
+                    await ndef.scan();  // Solicitando permissão e iniciando o scanner
                     statusElement.textContent = 'Seu dispositivo é capaz de ler NFC!';
                     document.getElementById('nfcModal').style.display = 'block';
                     log("> Scan started");
