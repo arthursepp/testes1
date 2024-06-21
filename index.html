@@ -223,25 +223,28 @@
 </div>
 
 <script>
+document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("scanButton").addEventListener("click", async () => {
-      const statusElement = document.getElementById('status');            
+    const statusElement = document.getElementById('status');
 
-      if ('NDEFReader' in window) {
-          try {
-              const ndef = new NDEFReader();
-              await ndef.scan();  // Solicitando permissão e iniciando o scanner                    
-              document.getElementById('nfcModal').style.display = 'block';                    
+    if ('NDEFReader' in window) {
+      try {
+        const ndef = new NDEFReader();
+        await ndef.scan();  // Solicitando permissão e iniciando o scanner
+        document.getElementById('nfcModal').style.display = 'block';
 
-              ndef.addEventListener("reading", () => {                        
-                  window.location.href = "perfil/";  // Redirecionando para a rota "perfil/"
-              });
-          } catch (error) {                    
-              alert('Erro ao tentar acessar a funcionalidade NFC.');
-          }
-      } else {
-          alert('Seu dispositivo não suporta NFC.');
+        ndef.addEventListener("reading", () => {
+          window.location.href = "perfil/";  // Redirecionando para a rota "perfil/"
+        });
+      } catch (error) {
+        alert('Erro ao tentar acessar a funcionalidade NFC.');
       }
+    } else {
+      alert('Seu dispositivo não suporta NFC.');
+    }
   });
+});
+
 </script>
 
 </body>
