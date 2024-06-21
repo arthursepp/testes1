@@ -1,248 +1,88 @@
-{% load static %}
-{% load extras %}
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-br">
 <head>
-<title>PRODESP</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- Imports: -->
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-<style>
-  body,h1,h2,h3,h4,h5 {font-family: "Poppins", sans-serif}
-  body {font-size:16px;}
-  .w3-half img{margin-bottom:-6px;margin-top:16px;opacity:0.8;cursor:pointer}
-  .w3-half img:hover{opacity:1}
-  
-  .w3-xxxlarge {
-    word-wrap: break-word;
-  }
-        
-  .iconsSide{
-    transition: transform 0.3s ease;
-    text-decoration: none;
-  }
-  
-  .iconsSide:hover {
-    transform: scale(1.2)
-  }
-  
-  .scrollable-element {
-    width: 100%; /* Define a largura desejada para o contêiner */
-    overflow-x: auto; /* Adiciona uma barra de rolagem horizontal se necessário */
-    white-space: nowrap; /* Impede a quebra de linha automática */
-    border: 1px solid #ccc; /* Opcional: Adiciona uma borda para visualização */
-    padding: 10px; /* Opcional: Adiciona espaçamento interno */
-  }
-  
-  .w3-card-4 {
-      transition: transform 0.3s ease;
-  }
-  
-  .w3-card-4:hover {
-      transform: scale(1.05);
-  }
-  
-  #projects-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-  }
-  
-  .w3-third {
-      flex: 1 1 calc(33.333% - 16px);
-      box-sizing: border-box;
-  }
-  
-  @media (max-width: 992px) {
-      .w3-third {
-          flex: 1 1 calc(50% - 16px);
-      }
-  }
-  
-  @media (max-width: 600px) {
-      .w3-third {
-          flex: 1 1 calc(100% - 16px);
-      }
-  }
-  
-  .cardLink {
-    text-decoration: none;
-  }
-  
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificação de NFC</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .status {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        .log {
+            margin-top: 20px;
+            font-size: 1em;
+            color: #333;
+            white-space: pre-wrap;
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <h1>Verificação de NFC</h1>
+        <button id="scanButton">Verificar NFC</button>
+        <div class="status" id="status"></div>
+        <div class="log" id="log"></div>
+    </div>
 
-<!-- Sidebar/menu -->
-<nav class="w3-sidebar w3-purple w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
-  
-  <a href="javascript:void(0)" class="" style="width:100%;font-size:22px">
-    <button class="w3-button w3-hide-large w3-display-topleft" onclick="w3_close()">
-      Fechar Menu
-    </button>    
-  </a>
-  <div class="w3-container">
-    <h3 class="w3-padding-54"> PRODESP<br>
-      {% if user.username %}
-      {{user.first_name}} <br>
-      <form id="logout-form" method="post" action="/accounts/logout/">{% csrf_token %}
-            <!-- Ícones da sidebar: -->
+    <!-- Modal -->
+    <div id="nfcModal" class="w3-modal">
+        <div class="w3-modal-content">
+            <header class="w3-container w3-teal">
+                <span onclick="document.getElementById('nfcModal').style.display='none'" 
+                class="w3-button w3-display-topright">&times;</span>
+                <h2>Leitura iniciada</h2>
+            </header>
+            <div class="w3-container w3-center">
+                <h4>Aproxime o crachá ao dispositivo como mostrado na animação abaixo:</h4>
+                <img src="./img/NFC (1).gif" alt="NFC Image" style="width:90%">
+            </div>
+        </div>
+    </div>
 
-      <!-- Reconhecimento facial -->
-      <form id="logout-form" method="post" action="/accounts/logout/">{% csrf_token %}
-        <i class="fa fa-camera-retro fa-1x w3-opacity iconsSide" title="Reconhecimento Facial"></i>     
-  
-        <!-- NFC: -->      
-        
-        <a href='/nfc' class="fa fa-id-badge fa-1x w3-padding iconsSide" id="nfcMobile" title="NFC Adicionar Cracha PRODESP"></a>
-        
-  
-        <!-- Adicionar celular -->
-        <i class="fa fa-mobile fa-lg w3-opacity iconsSide" title="Adicionar Celular confirmar SMS"></i>
-  
-        <!-- Linha do tempo do funcionário -->
-        
-          <a href="/timeline" class="fa fa-1x material-icons w3-padding iconsSide" title="Adicionar Celular confirmar SMS">view_timeline</a>      
-        
-        <!-- Botão sair -->
-        <button style="background: none; border: none;" class="btnSair">
-          <i class="fa fa-sign-out fa-lg iconsSide" title="Sair" style="color: white;"></i> 
-        </button>
+    <script>
+        function log(message) {
+            const logElement = document.getElementById('log');
+            logElement.textContent += message + '\n';
+        }
 
-    </h3>
+        document.getElementById("scanButton").addEventListener("click", async () => {
+            const statusElement = document.getElementById('status');            
 
-      </form>
-      {% else %}
-      <form action="/accounts/microsoft/login/" method="post">
-        {% csrf_token %}
-        <button type="submit" id="r-btn" class="btn btn-info pl-5 pr-5 mb-5 text-center fonte_governo"><i class="fa-brands fa-microsoft"></i> 
-        <span  style="font-weight: 600;">Entrar com o </span><span style="font-weight: bold;">MS </span></button>
-      </form>
-  
-      {% endif %}
+            if ('NDEFReader' in window) {
+                try {
+                    const ndef = new NDEFReader();
+                    await ndef.scan();  // Solicitando permissão e iniciando o scanner                    
+                    document.getElementById('nfcModal').style.display = 'block';                    
 
-  </div>
-  
-  <!-- Links para as rotas: -->
-  <div class="w3-bar-block">
-
-    <a href="/" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Home</a>
-
-    {% if acesso %}
-    <a href="{% url 'esforco_url' %}" target="_blank" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Esforços</a> 
-    {% endif %}
-
-    <a href="{% url 'inventario_url' %}" target="_blank" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Inventario - Tecnologia</a>
-  
-    {% if acesso %}
-    <a href="{% url 'inventario_url' %}" target="_blank" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Inventario - Tecnologia</a>    
-    {% endif %}
-
-    {% if request.user|has_group:"AGENDA_ADM" %}
-    <a href="{% url 'agenda_url' %}" target="_blank" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Agenda Presidente <span class="w3-badge w3-red">{{count_agenda}}</span></a> 
-    {% endif %}
-
-    {% if request.user|has_group:"MD_ADM" %}
-    <a href="{% url 'md_url' %}" target="_blank" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Modernização Digital</a> 
-    {% endif %}
-        
-    <a href="#" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white" title="Em breve formulário e reports da PDTIC de Modernização Digital">Transformação Digital</a>
-
-    <a href="/projetos" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white" title="Visualizar os projetos registrados">Projetos</a>
-    
-    <a href="/projetos/registrar/" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white" title="Registrar um projeto em andamento ou concluído">Registrar novo projeto</a>
-  </div>
-</nav>
-
-<!-- Top menu on small screens -->
-<header class="w3-container w3-top w3-hide-large w3-purple w3-xlarge w3-padding">
-  <a href="javascript:void(0)" class="w3-button w3-purple w3-margin-right" onclick="w3_open()">☰</a>
-  <span>PRODESP</span>
-  
-  <script>
-    function w3_open() {
-      document.getElementById("mySidebar").style.display = "block";
-      document.getElementById("myOverlay").style.display = "block";
-    }
-
-    function w3_close() {
-      document.getElementById("mySidebar").style.display = "none";
-      document.getElementById("myOverlay").style.display = "none";
-    }
-
-    function log(message) {
-      const logElement = document.getElementById('log');
-      logElement.textContent += message + '\n';
-  } 
-        
-</script>
-</header>
-
-
-<!-- Overlay effect when opening sidebar on small screens -->
-<div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
-
-<!-- !PAGE CONTENT! -->
-<div class="w3-main" style="margin-left:340px;margin-right:40px">
-
-  <!-- Header -->
-  <div class="w3-container" style="margin-top:80px" id="showcase">
-    <h1 class="w3-jumbo">Cadastrar crachá de funcionário</h1>
-  </div>
-
-  <hr>
-  <div id="nfc_mobile">
-    <p>Pressione o botão e aproxime o crachá ao celular para escaneá-lo...</p>   
-
-<!-- Botão para acionar o scan NFC -->
-<button id="scanButton">Verificar NFC</button>
-        <!-- Modal -->
-        <div id="nfcModal" class="w3-modal">
-          <div class="w3-modal-content">
-              <header class="w3-container w3-teal">
-                  <span onclick="document.getElementById('nfcModal').style.display='none'" 
-                  class="w3-button w3-display-topright">&times;</span>
-                  <h2>Leitura iniciada</h2>
-              </header>
-              <div class="w3-container w3-center">
-                  <h4>Aproxime o crachá ao dispositivo como mostrado na animação abaixo:</h4>
-                  <img src="./img/NFC (1).gif" alt="NFC Image" style="width:90%">
-              </div>
-          </div>
-      </div>
-  
-  </div>
-</div>
-  
-<!-- End page content -->
-</div>
-
-<script>
-  document.getElementById("scanButton").addEventListener("click", async () => {
-      const statusElement = document.getElementById('status');            
-
-      if ('NDEFReader' in window) {
-          try {
-              const ndef = new NDEFReader();
-              await ndef.scan();  // Solicitando permissão e iniciando o scanner                    
-              document.getElementById('nfcModal').style.display = 'block';                    
-
-              ndef.addEventListener("reading", () => {                        
-                  window.location.href = "perfil/";  // Redirecionando para a rota "perfil/"
-              });
-          } catch (error) {                    
-              alert('Erro ao tentar acessar a funcionalidade NFC.');
-          }
-      } else {
-          alert('Seu dispositivo não suporta NFC.');
-      }
-  });
-</script>
-
+                    ndef.addEventListener("reading", () => {                        
+                        window.location.href = "perfil/";  // Redirecionando para a rota "perfil/"
+                    });
+                } catch (error) {                    
+                    alert('Erro ao tentar acessar a funcionalidade NFC.');
+                }
+            } else {
+                alert('Seu dispositivo não suporta NFC.');
+            }
+        });
+    </script>
 </body>
 </html>
