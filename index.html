@@ -50,31 +50,14 @@
     </div>
 
     <script>
-        async function checkNFC() {
+        function checkNFC() {
             const statusElement = document.getElementById('status');
 
-            if ('NFC' in window) {
-                try {
-                    const nfc = new NFCReader();
-                    await nfc.scan();
-                    statusElement.textContent = 'Seu dispositivo é capaz de ler NFC!';
-                    document.getElementById('nfcModal').style.display = 'block';
-                } catch (error) {
-                    statusElement.textContent = 'Seu dispositivo suporta NFC, mas houve um erro ao tentar acessar a funcionalidade.';
-                }
+            if ('NDEFReader' in window) {
+                statusElement.textContent = 'Seu dispositivo é capaz de ler NFC!';
+                document.getElementById('nfcModal').style.display = 'block';
             } else {
                 statusElement.textContent = 'Seu dispositivo não suporta NFC.';
-            }
-        }
-
-        class NFCReader {
-            async scan() {
-                // Implementação simplificada para fins de verificação de suporte
-                if (navigator.nfc) {
-                    return navigator.nfc.scan();
-                } else {
-                    throw new Error('API Web NFC não está disponível.');
-                }
             }
         }
     </script>
