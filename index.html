@@ -74,9 +74,10 @@
                     document.getElementById('nfcModal').style.display = 'block';                    
 
                     ndef.addEventListener("reading", () => {                        
-                        window.location.reload();
+                        window.location.href = "perfil/";  // Redirecionando para a rota "perfil/"
                     });
-                } catch (error) {                    
+                } catch (error) {
+                    log("Argh! " + error);
                     alert('Erro ao tentar acessar a funcionalidade NFC.');
                 }
             } else {
