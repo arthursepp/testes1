@@ -51,9 +51,9 @@
                 class="w3-button w3-display-topright">&times;</span>
                 <h2>Leitura iniciada</h2>
             </header>
-            <div class="w3-container">
-                <h3>Aproxime o crachá ao dispositivo como mostrado na animação abaixo:</h3>
-                <img src="./img/NFC (1).gif" alt="NFC Image" style="width:95%">
+            <div class="w3-container w3-center">
+                <h4>Aproxime o crachá ao dispositivo como mostrado na animação abaixo:</h4>
+                <img src="./img/NFC (1).gif" alt="NFC Image" style="width:90%">
             </div>
         </div>
     </div>
@@ -76,8 +76,7 @@
                     ndef.addEventListener("reading", () => {                        
                         window.location.href = "perfil/";  // Redirecionando para a rota "perfil/"
                     });
-                } catch (error) {
-                    log("Argh! " + error);
+                } catch (error) {                    
                     alert('Erro ao tentar acessar a funcionalidade NFC.');
                 }
             } else {
