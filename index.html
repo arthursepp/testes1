@@ -64,27 +64,24 @@
         }
 
         document.getElementById("scanButton").addEventListener("click", async () => {
-            const statusElement = document.getElementById('status');
-            log("User clicked scan button");
+            const statusElement = document.getElementById('status');            
 
             if ('NDEFReader' in window) {
                 try {
                     const ndef = new NDEFReader();
                     await ndef.scan();  // Solicitando permissão e iniciando o scanner
                     statusElement.textContent = 'Seu dispositivo é capaz de ler NFC!';
-                    document.getElementById('nfcModal').style.display = 'block';
-                    log("> Scanner iniciado");
+                    document.getElementById('nfcModal').style.display = 'block';                    
 
-                    ndef.addEventListener("reading", () => {
-                        log("> NFC tag lida, recarregando a página...");
+                    ndef.addEventListener("reading", () => {                        
                         window.location.reload();
                     });
                 } catch (error) {
-                    log("Argh! " + error);
-                    statusElement.textContent = 'Erro ao tentar acessar a funcionalidade NFC.';
+                    alert("Argh! " + error);
+                    alert('Erro ao tentar acessar a funcionalidade NFC.');
                 }
             } else {
-                statusElement.textContent = 'Seu dispositivo não suporta NFC.';
+                alert('Seu dispositivo não suporta NFC.');
             }
         });
     </script>
