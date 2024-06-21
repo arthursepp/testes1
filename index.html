@@ -49,10 +49,11 @@
             <header class="w3-container w3-teal">
                 <span onclick="document.getElementById('nfcModal').style.display='none'" 
                 class="w3-button w3-display-topright">&times;</span>
-                <h2>NFC Detectado</h2>
+                <h2>Leitura iniciada</h2>
             </header>
             <div class="w3-container">
-                <img src="./img/NFC (1).gif" alt="NFC Image" style="width:100%">
+                <h3>Aproxime o crachá ao dispositivo como mostrado na animação abaixo:</h3>
+                <img src="./img/NFC (1).gif" alt="NFC Image" style="width:95%">
             </div>
         </div>
     </div>
@@ -69,8 +70,7 @@
             if ('NDEFReader' in window) {
                 try {
                     const ndef = new NDEFReader();
-                    await ndef.scan();  // Solicitando permissão e iniciando o scanner
-                    statusElement.textContent = 'Seu dispositivo é capaz de ler NFC!';
+                    await ndef.scan();  // Solicitando permissão e iniciando o scanner                    
                     document.getElementById('nfcModal').style.display = 'block';                    
 
                     ndef.addEventListener("reading", () => {                        
