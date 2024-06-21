@@ -73,15 +73,11 @@
                     await ndef.scan();  // Solicitando permissão e iniciando o scanner
                     statusElement.textContent = 'Seu dispositivo é capaz de ler NFC!';
                     document.getElementById('nfcModal').style.display = 'block';
-                    log("> Scan started");
+                    log("> Scanner iniciado");
 
-                    ndef.addEventListener("readingerror", () => {
-                        log("Argh! Cannot read data from the NFC tag. Try another one?");
-                    });
-
-                    ndef.addEventListener("reading", ({ message, serialNumber }) => {
-                        log(`> Serial Number: ${serialNumber}`);
-                        log(`> Records: (${message.records.length})`);
+                    ndef.addEventListener("reading", () => {
+                        log("> NFC tag lida, recarregando a página...");
+                        window.location.reload();
                     });
                 } catch (error) {
                     log("Argh! " + error);
