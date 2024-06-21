@@ -1,73 +1,82 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-
-    <title>Teste nfc scan</title>
-  </head>
-  <body class="w3-container">
-    <h2>Scanner NFC</h2>
-
-    <button class="w3-purple w3-button w3-round" onclick="document.getElementById('id01').style.display='block'" id="btnScan">
-      Escanear
-    </button>
-
-    <p id="tag"></p>
-
-    <div id="id01" class="w3-modal">
-      <div class="w3-modal-content">
-        <header class="w3-container w3-teal">
-          <span onclick="document.getElementById('id01').style.display='none'" class="w3-button w3-display-topright">&times;</span>
-          <h2>Modal Header</h2>
-        </header>
-        <div class="w3-container w3-center">
-          <h3>Aproxime o crachá ao seu dispositivo como mostrado na animação abaixo.</h3>
-          <img src="./img/NFC (1).gif" alt="" width="300" />
-        </div>
-      </div>
-    </div>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        if ('NDEFReader' in window) {
-          console.log('NDEFReader is supported.');
-          NDEFReader.isSupported().then((supported) => {
-            if (supported) {
-              console.log('NFC reading is supported on this device.');
-              const scanButton = document.getElementById('btnScan');
-              const tag = document.getElementById('tag');
-              scanButton.addEventListener("click", async () => {
-                console.log("User clicked scan button");
-                try {
-                  const ndef = new NDEFReader();
-                  await ndef.scan();
-                  console.log("> Scan started");
-                  ndef.addEventListener("readingerror", () => {
-                    console.log("Argh! Cannot read data from the NFC tag. Try another one?");
-                  });
-                  ndef.addEventListener("reading", ({ message, serialNumber }) => {
-                    tag.innerText = `> Serial Number: ${serialNumber}`;
-                    console.log(`> Serial Number: ${serialNumber}`);
-                    console.log(`> Records: (${message.records.length})`);
-                  });
-                } catch (error) {
-                  console.log("Argh! " + error);
-                }
-              });
-            } else {
-              console.log('NFC reading is not supported on this device.');
-            }
-          }).catch((error) => {
-            console.error('Error checking NFC support:', error);
-          });
-        } else {
-          console.log('NDEFReader is not supported in this browser.');
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificação de NFC</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
         }
-      });
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .status {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Verificação de NFC</h1>
+        <button onclick="checkNFC()">Verificar NFC</button>
+        <div class="status" id="status"></div>
+    </div>
+
+    <!-- Modal -->
+    <div id="nfcModal" class="w3-modal">
+        <div class="w3-modal-content">
+            <header class="w3-container w3-teal">
+                <span onclick="document.getElementById('nfcModal').style.display='none'" 
+                class="w3-button w3-display-topright">&times;</span>
+                <h2>NFC Detectado</h2>
+            </header>
+            <div class="w3-container">
+                <img src="./img/NFC (1).gif" alt="NFC Image" style="width:100%">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function checkNFC() {
+            const statusElement = document.getElementById('status');
+
+            if ('NFC' in window) {
+                try {
+                    const nfc = new NFCReader();
+                    await nfc.scan();
+                    statusElement.textContent = 'Seu dispositivo é capaz de ler NFC!';
+                    document.getElementById('nfcModal').style.display = 'block';
+                } catch (error) {
+                    statusElement.textContent = 'Seu dispositivo suporta NFC, mas houve um erro ao tentar acessar a funcionalidade.';
+                }
+            } else {
+                statusElement.textContent = 'Seu dispositivo não suporta NFC.';
+            }
+        }
+
+        class NFCReader {
+            async scan() {
+                // Implementação simplificada para fins de verificação de suporte
+                if (navigator.nfc) {
+                    return navigator.nfc.scan();
+                } else {
+                    throw new Error('API Web NFC não está disponível.');
+                }
+            }
+        }
     </script>
-  </body>
+</body>
 </html>
