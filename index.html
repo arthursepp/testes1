@@ -26,13 +26,21 @@
             margin-top: 20px;
             font-size: 1.2em;
         }
+        .log {
+            margin-top: 20px;
+            font-size: 1em;
+            color: #333;
+            white-space: pre-wrap;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Verificação de NFC</h1>
-        <button onclick="checkNFC()">Verificar NFC</button>
+        <button id="scanButton">Verificar NFC</button>
         <div class="status" id="status"></div>
+        <div class="log" id="log"></div>
     </div>
 
     <!-- Modal -->
@@ -50,16 +58,39 @@
     </div>
 
     <script>
-        function checkNFC() {
+        function log(message) {
+            const logElement = document.getElementById('log');
+            logElement.textContent += message + '\n';
+        }
+
+        document.getElementById("scanButton").addEventListener("click", async () => {
             const statusElement = document.getElementById('status');
+            log("User clicked scan button");
 
             if ('NDEFReader' in window) {
-                statusElement.textContent = 'Seu dispositivo é capaz de ler NFC!';
-                document.getElementById('nfcModal').style.display = 'block';
+                try {
+                    const ndef = new NDEFReader();
+                    await ndef.scan();
+                    statusElement.textContent = 'Seu dispositivo é capaz de ler NFC!';
+                    document.getElementById('nfcModal').style.display = 'block';
+                    log("> Scan started");
+
+                    ndef.addEventListener("readingerror", () => {
+                        log("Argh! Cannot read data from the NFC tag. Try another one?");
+                    });
+
+                    ndef.addEventListener("reading", ({ message, serialNumber }) => {
+                        log(`> Serial Number: ${serialNumber}`);
+                        log(`> Records: (${message.records.length})`);
+                    });
+                } catch (error) {
+                    log("Argh! " + error);
+                    statusElement.textContent = 'Erro ao tentar acessar a funcionalidade NFC.';
+                }
             } else {
                 statusElement.textContent = 'Seu dispositivo não suporta NFC.';
             }
-        }
+        });
     </script>
 </body>
 </html>
